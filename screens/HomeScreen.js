@@ -6,11 +6,14 @@ import {
   createPayment,
   resumePayment,
 } from '../api/primer/primerApi';
+import {useNavigation} from '@react-navigation/native';
 
 const HomeScreen = () => {
   const [, setError] = useState(null);
+  const navigation = useNavigation();
+  let clientToken = null;
   const clientSessionRequestBody = {
-    customerId: '77230001',
+    customerId: '20211123104720292',
     orderId: '7373737',
     currencyCode: 'EUR',
     order: {
@@ -52,42 +55,6 @@ const HomeScreen = () => {
     },
     paymentMethod: {
       vaultOnSuccess: false,
-      //options: {
-      // GOOGLE_PAY: {
-      //   surcharge: {
-      //     amount: 50,
-      //   },
-      // },
-      // ADYEN_IDEAL: {
-      //   surcharge: {
-      //     amount: 50,
-      //   },
-      // },
-      // ADYEN_SOFORT: {
-      //   surcharge: {
-      //     amount: 50,
-      //   },
-      // },
-      // PAYPAL: {
-      //   surcharge: {
-      //     amount: 150,
-      //   },
-      // },
-      // PAYMENT_CARD: {
-      //   networks: {
-      //     VISA: {
-      //       surcharge: {
-      //         amount: 100,
-      //       },
-      //     },
-      // MASTERCARD: {
-      //   surcharge: {
-      //     amount: 200,
-      //   },
-      // },
-      // },
-      //},
-      //},
     },
   };
   const onBeforeClientSessionUpdate = () => {
@@ -95,7 +62,9 @@ const HomeScreen = () => {
   };
 
   const onClientSessionUpdate = clientSession => {
-    console.log(`onClientSessionUpdate\n${JSON.stringify(clientSession)}`);
+    console.log(
+      `onClientSessionUpdate\n${JSON.stringify(clientSession.token)}`,
+    );
   };
 
   const onBeforePaymentCreate = (checkoutPaymentMethodData, handler) => {
@@ -128,7 +97,7 @@ const HomeScreen = () => {
         paymentId = payment.id;
         handler.continueWithNewClientToken(payment.requiredAction.clientToken);
       } else {
-        props.navigation.navigate('Result', payment);
+        navigation.navigate('Result', payment);
         handler.handleSuccess();
       }
     } catch (err) {
@@ -248,6 +217,10 @@ const HomeScreen = () => {
   };
   const onVaultManagerButtonTapped = async () => {
     try {
+      console.log(
+        'clientSessionRequestBody',
+        JSON.stringify(clientSessionRequestBody),
+      );
       const clientSession = await createClientSession(clientSessionRequestBody);
       clientToken = clientSession.clientToken;
       await Primer.configure(settings);

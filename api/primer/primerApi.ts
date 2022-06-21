@@ -10,11 +10,12 @@ import type {
 } from '../primer/entities/IClientSessionRequestBody';
 import type {IPayment} from '../primer/entities/IPayment';
 
-//const baseUrl = 'https://api.sandbox.primer.io';
-const baseUrl = 'https://us-central1-primerdemo-8741b.cloudfunctions.net/api';
+const baseUrl = 'https://api.sandbox.primer.io';
+//const baseUrl = 'https://us-central1-primerdemo-8741b.cloudfunctions.net/api';
 let staticHeaders = {
   'Content-Type': 'application/json',
-  //'X-API-KEY': '96732665-a785-4da1-9548-5ed08b93da7c',
+  //'X-API-KEY': '2881c4ba-5757-4fcd-8270-1db66d0fff38', // new
+  'X-API-KEY': '96732665-a785-4da1-9548-5ed08b93da7c',
   environment: 'sandbox',
 };
 
@@ -34,7 +35,7 @@ export const createClientSession = async (body: IClientSessionRequestBody) => {
     const response = await axios.post(url, body, {headers: headers});
 
     console.log(`\nRESPONSE [${response.status}]:`);
-    console.log(response.data);
+    console.log(response.data.clientToken);
 
     if (response.status >= 200 && response.status < 300) {
       return response.data;
